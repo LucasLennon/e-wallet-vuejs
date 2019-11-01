@@ -8,7 +8,7 @@ import moduleLocalRoute from './route'
 // MainStore.registerModule("example", moduleLocalStore);
 MainRoute.addRoutes(moduleLocalRoute);
 MainStore.dispatch("addDrawerItem", {
-  name: "homePage",
+  name: "dashboardPage",
   icon: "fa-home",
   title: "Dashboard"
 });

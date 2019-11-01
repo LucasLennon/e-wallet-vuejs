@@ -8,7 +8,7 @@ import vuetify from './core/plugins/vuetify';
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
-import "./modules/Home";
+import "./modules/Dashboard";
 import "./modules/example";
 
 Vue.config.productionTip = false
