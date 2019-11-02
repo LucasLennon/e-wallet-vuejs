@@ -1,0 +1,16 @@
+{
+    "name": "e-wallet",
+    "version": 2,
+    "scope": "lucasespir@gmail.com",
+    "public": false,
+    "github": {
+        "enabled": false
+    },
+    "routes": [
+        { 
+            "src": "/", 
+            "headers": {"cache-control": "s-maxage=1000"}, 
+            "dest": "/" 
+        }
+    ]
+}
