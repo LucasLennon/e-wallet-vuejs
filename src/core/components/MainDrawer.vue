@@ -1,24 +1,46 @@
 <template>
   <v-navigation-drawer color="primary" v-on="$listeners" v-bind="[$props]" absolute>
+
     <v-list-item>
-      <v-flex py-5 xs12 class="justify-center">
-        <h1 class="text-center white--text display-1"> E-Wallet </h1>
-      </v-flex>
+
+      <DrawerLogo />
+      
     </v-list-item>
+    
     <v-list-item :key="key" v-for="(item, key) of drawerItens">
-      <v-btn class="justify-start" block exact-active-class="white--text" text link :to='{ name: item.name }'>
-        <v-icon class="mr-5">
-          {{item.icon}}
-        </v-icon>
-        {{item.title}}
+      <v-btn
+        class="justify-start"
+        block
+        exact-active-class="white--text"
+        text
+        link
+        :to="{ name: item.name }"
+      >
+        <v-icon class="mr-5">{{ item.icon }}</v-icon>
+        {{ item.title }}
       </v-btn>
     </v-list-item>
+
+    <template v-slot:append>
+      <v-list-item class="pb-5">
+        <v-btn
+          class="justify-center"
+          color="primary--text"
+          block
+          link
+        >Logout</v-btn>
+      </v-list-item>
+    </template>
   </v-navigation-drawer>
 </template>
 <script>
+import DrawerLogo from "./DrawerLogo";
 import { mapState } from "vuex";
 export default {
   name: "MainDrawer",
+  components: {
+    DrawerLogo
+  },
   props: {
     value: {
       type: Boolean,
@@ -27,16 +49,16 @@ export default {
   },
   computed: {
     ...mapState({
-      drawerItens: state => state.drawerItens,
+      drawerItens: state => state.drawerItens
     }),
     drawerState: {
-      get(){
-        return this.value
+      get() {
+        return this.value;
       },
-      set(value){
-        this.$emit('input', value)
+      set(value) {
+        this.$emit("input", value);
       }
     }
-  },
+  }
 };
 </script>
