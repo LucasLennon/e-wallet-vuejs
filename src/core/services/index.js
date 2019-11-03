@@ -1,7 +1,6 @@
 import { openDB } from "idb";
 
 class LocalAPI {
-  constructor() {}
 
   async accessDB() {
     this.db = await openDB("e-wallet", 1, {
@@ -11,6 +10,7 @@ class LocalAPI {
         });
       }
     });
+    return Promise.resolve('Connected')
   }
   async addToUsers(user) {
     if (!!user.name === false || !!user.email === false || !!user.password === false) {
@@ -20,11 +20,21 @@ class LocalAPI {
     // let all = await this.db.getAll("users");
     // const searchForItem = all.find(item => item.id === user.id);
 
+    user.id = "1234"
+
     if (!!search === false) {
       this.db.add("users", user);
+      return Promise.resolve({
+        status: 200,
+        message: "User created",
+        data: user
+      });
     }
     else{
-        return Promise.reject("Error")
+        return Promise.reject({
+          status: 400,
+          message: "Bad request"
+        });
     }
   }
   async updateUser(user) {
@@ -69,5 +79,8 @@ class LocalAPI {
   }
 }
 
-window.LocalAPI = new LocalAPI();
+if (window) {
+    window.LocalAPI = new LocalAPI();
+}
+
 export default new LocalAPI();
