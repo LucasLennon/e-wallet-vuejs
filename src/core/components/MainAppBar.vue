@@ -32,6 +32,7 @@ export default {
     },
     user() {
       return {
+        id: "562c887b-e049-4e42-bad0-02849155c8e7",
         image: "https://scontent.fbfh3-3.fna.fbcdn.net/v/t1.0-1/p160x160/26239279_1674575349231913_1901660412605220150_n.jpg?_nc_cat=104&_nc_oc=AQnWcNDHG704v33NSdgjGxt0iGSiIZ-13yldEZuo_nzL2xg0TdbjF6egHtjL-SZFitk&_nc_ht=scontent.fbfh3-3.fna&oh=9bd931a066c2b7311856f88da21661f6&oe=5E597C6D",
         name: "Lucas"
       };

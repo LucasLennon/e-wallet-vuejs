@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from '@/core/App.vue'
 
+import LocalAPI from './core/services'
 import router from './core/router'
 import store from './core/store'
 import vuetify from './core/plugins/vuetify';
