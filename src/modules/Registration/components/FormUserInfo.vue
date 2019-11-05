@@ -4,7 +4,7 @@
       v-model="value.cpf"
       v-mask="['###.###.###-##']"
       label="CPF"
-      :rules="[rules.required]"
+      :rules="[rules.required, rules.cpfLength]"
       required
     />
     <v-text-field v-model="value.name" label="Nome" :rules="[rules.required]" required />
@@ -35,7 +35,8 @@ export default {
         !!e && !!e.match(/[a-z]/g) || "Deve conter uma letra minuscula.",
       oneUppercase: e =>
         !!e && !!e.match(/[A-Z]/g) || "Deve conter uma letra maiuscula.",
-      oneNumber: e => !!e && !!e.match(/[\d]/g) || "Deve conter um numero."
+      oneNumber: e => !!e && !!e.match(/[\d]/g) || "Deve conter um numero.",
+      cpfLength: e => !!e && e.replace(/\D/g, '').length === 11 || 'CPF está incorreto',
     }
   })
 };
