@@ -1,5 +1,16 @@
+import LocalApi from "@/core/services/LocalApi";
+
 export default {
-  state: {},
-  mutations: {},
-  actions: {}
+  namespaced: true,
+  actions: {
+    async registerNewUser({ commit }, payload) {
+      await LocalApi.accessDB();
+      try {
+        const response = await LocalApi.addToUsers(payload);
+        return response;
+      } catch (error) {
+        throw Error(error);
+      }
+    }
+  }
 };
