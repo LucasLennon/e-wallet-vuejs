@@ -8,11 +8,11 @@
       required
     />
     <v-text-field v-model="value.name" label="Nome" :rules="[rules.required]" required />
-    <v-text-field v-model="value.email" label="E-mail" :rules="[rules.required]" required />
+    <v-text-field type="email" v-model="value.email" label="E-mail" :rules="[rules.required]" required />
     <v-text-field
       v-model="value.password"
       type="password"
-      label="Password"
+      label="Senha"
       :rules="[rules.required, rules.tooSmall, rules.oneLowerCase, rules.oneUppercase, rules.oneNumber]"
       required
       hint="1 numero, 1 maiscula, 1 minuscula, 6 caracteres"

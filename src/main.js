@@ -9,8 +9,8 @@ import './core/plugins/vue-the-mask';
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
+import "./modules/LoginAndRegistration";
 import "./modules/Dashboard";
-import "./modules/Registration";
 
 import "./modules/example";
 
