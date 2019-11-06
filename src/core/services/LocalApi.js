@@ -1,5 +1,16 @@
 import { openDB } from "idb";
-import generateUUID from "../utils/generateUUID"; 
+import generateUUID from "../utils/generateUUID";
+
+const initialValues = {
+  currency: [
+    {
+      simbolo: "R$",
+      nomeFormatado: "Real Brasileiro",
+      tipoMoeda: "A",
+      quantity: 10000000
+    }
+  ]
+}
 
 class LocalAPI {
   async accessDB() {
@@ -25,7 +36,7 @@ class LocalAPI {
     user.id = generateUUID();
 
     if (!!search === false) {
-      await this.db.add("users", user);
+      await this.db.add("users", Object.assign(user, initialValues));
       return Promise.resolve({
         status: 200,
         message: "User created",
@@ -64,21 +75,20 @@ class LocalAPI {
         message: "Login",
         data: userFound
       });
-    }
-    else{
+    } else {
       return Promise.reject({
         status: 404,
-        message: "No user Found",
+        message: "No user Found"
       });
     }
   }
   async searchForUser(user) {
     let allUsers = await this.db.getAll("users");
-    return allUsers.find((item) => {
+    return allUsers.find(item => {
       if (item.id === user.id || item.email === user.email) {
         return Promise.resolve(item);
       }
-    })
+    });
   }
 }
 

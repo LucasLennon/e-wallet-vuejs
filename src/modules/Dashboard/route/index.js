@@ -6,6 +6,6 @@ export default [
       title: "Bem vindo!"
     },
     component: () =>
-      import(/* webpackChunkName: "about" */ "../pages/Dashboard.page.vue")
+      import("../pages/Dashboard.page.vue")
   }
 ];
