@@ -3,7 +3,7 @@
     <v-text-field
       type="email"
       v-model="value.email"
-      :rules="[rules.required]"
+      :rules="[rules.required, rules.emailFormat]"
       label="E-mail"
       required
     />
@@ -17,6 +17,7 @@
   </v-flex>
 </template>
 <script>
+import rules from "../rules"
 export default {
   name: "FormLogin",
   props: {
@@ -27,7 +28,8 @@ export default {
   },
   data: () => ({
     rules: {
-      required: e => !!e || "Campo vazio"
+      required: rules.required,
+      emailFormat: rules.emailFormat,
     }
   })
 };

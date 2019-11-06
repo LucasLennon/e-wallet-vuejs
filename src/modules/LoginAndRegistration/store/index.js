@@ -12,9 +12,10 @@ export default {
   },
   actions: {
     async requestLogin({commit}, payload){
-      LocalApi.accessDB()
+      await LocalApi.accessDB()
       const { data } = await LocalApi.login(payload);
       commit("SET_USER", data);
+      return data;
     },
     async requestLogout({commit}){
       commit("SET_USER", null);

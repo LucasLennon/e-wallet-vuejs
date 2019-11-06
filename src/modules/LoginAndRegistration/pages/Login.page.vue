@@ -1,6 +1,6 @@
 <template>
   <v-container fill-height class="justify-center">
-    <v-flex xs12 sm8 md6>
+    <v-flex xs12 sm8 md6 style="position: relative;">
       <v-flex class="d-flex justify-end">
         <v-btn text link :to="{ name:'registrationPage' }">
           Registro
@@ -13,24 +13,27 @@
           <v-divider />
         </v-col>
         <v-col>
-          <v-form class="" v-model="formValid" @submit.prevent="submit">
+          <v-form class v-model="formValid" @submit.prevent="submit">
             <FormLogin v-model="form" />
             <v-btn type="submit" color="primary" block :disabled="!formValid">Logar</v-btn>
           </v-form>
         </v-col>
       </v-card>
+      <BaseAlert v-model="notification"/>
     </v-flex>
   </v-container>
 </template>
 <script>
 import { mapActions } from "vuex";
+import BaseAlert from "@/core/components/BaseAlert";
 import CardTitle from "../components/CardTitle";
 import FormLogin from "../components/FormLogin";
 export default {
   name: "LoginPage",
   components: {
+    BaseAlert,
     CardTitle,
-    FormLogin,
+    FormLogin
   },
   data: () => ({
     notification: {
@@ -51,9 +54,14 @@ export default {
       this.loading = true;
       try {
         await this.requestLogin(this.form);
-        this.$router.push({ name: "dashboardPage" })
+        this.$router.push({ name: "dashboardPage" });
       } catch (error) {
-        console.error(error);
+        this.notification = {
+          active: true,
+          type: "error",
+          message: "Informações invalidas, verifique suas informações."
+        };
+        // console.error(error);
       } finally {
         this.loading = false;
       }
