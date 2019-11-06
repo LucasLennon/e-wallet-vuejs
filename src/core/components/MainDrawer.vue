@@ -28,6 +28,7 @@
           color="primary--text"
           block
           link
+          @click="requestLogout"
         >Logout</v-btn>
       </v-list-item>
     </template>
@@ -35,7 +36,7 @@
 </template>
 <script>
 import DrawerLogo from "./DrawerLogo";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
   name: "MainDrawer",
   components: {
@@ -59,6 +60,9 @@ export default {
         this.$emit("input", value);
       }
     }
+  },
+  methods: {
+    ...mapActions('login', ['requestLogout']),
   }
 };
 </script>
