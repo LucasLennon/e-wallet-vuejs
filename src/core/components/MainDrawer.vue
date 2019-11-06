@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer color="primary" v-on="$listeners" v-bind="[$props]" absolute>
+  <v-navigation-drawer color="primary" v-on="$listeners" v-bind="[$props]" absolute :temporary="true">
 
     <v-list-item>
 
