@@ -1,5 +1,5 @@
 <template>
-  <v-flex class="white">
+  <v-flex class="grey lighten-3">
     <MainDrawer v-model="drawer" />
     <MainAppBar v-model="drawer" />
     <v-container>
