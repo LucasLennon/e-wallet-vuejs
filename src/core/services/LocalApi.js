@@ -10,13 +10,59 @@ const initialValues = {
       quantity: 10000000
     }
   ]
+};
+
+class Token {
+  async setTokenToUser(user) {
+    let findUser = await this.findUser(user);
+    const createToken = {
+      id: findUser.id,
+      token: generateUUID()
+    };
+    let cursorSessions = await this.db
+      .transaction("sessions")
+      .store.openCursor();
+    await new Promise(async resolve => {
+      while (cursorSessions) {
+        if (cursorSessions.value.id === createToken.id) {
+          await this.db.delete("sessions", cursorSessions.key);
+          resolve();
+        }
+      }
+      resolve();
+    });
+    await this.db.add("sessions", createToken);
+    return Promise.resolve(createToken);
+  }
+}
+class User extends Token {
+  async findUser(user) {
+    let allUsers = await this.db.getAll("users");
+    return allUsers.find(item => {
+      if (item.id === user.id || item.email === user.email) {
+        return Promise.resolve(item);
+      }
+    });
+  }
+  async getUser(token) {
+    let allSessions = await this.db.getAll("sessions");
+    const user = allSessions.find(item => item.token === token);
+    const getUser = await this.findUser(user);
+    return Promise.resolve({
+      status: 200,
+      data: getUser
+    });
+  }
 }
 
-class LocalAPI {
+class LocalAPI extends User {
   async accessDB() {
     this.db = await openDB("e-wallet", 1, {
       upgrade(db) {
         db.createObjectStore("users", {
+          autoIncrement: true
+        });
+        db.createObjectStore("sessions", {
           autoIncrement: true
         });
       }
@@ -32,7 +78,7 @@ class LocalAPI {
       throw Promise.reject("Bad Request");
     }
 
-    const search = await this.searchForUser(user);
+    const search = await this.findUser(user);
     user.id = generateUUID();
 
     if (!!search === false) {
@@ -68,12 +114,12 @@ class LocalAPI {
     }
   }
   async login(user) {
-    const userFound = await this.searchForUser(user);
-    if (userFound) {
+    const token = await this.setTokenToUser(user);
+    if (token) {
       return Promise.resolve({
         status: 200,
         message: "Login",
-        data: userFound
+        data: token
       });
     } else {
       return Promise.reject({
@@ -81,14 +127,6 @@ class LocalAPI {
         message: "No user Found"
       });
     }
-  }
-  async searchForUser(user) {
-    let allUsers = await this.db.getAll("users");
-    return allUsers.find(item => {
-      if (item.id === user.id || item.email === user.email) {
-        return Promise.resolve(item);
-      }
-    });
   }
 }
 
