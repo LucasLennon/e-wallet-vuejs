@@ -4,10 +4,10 @@ import generateUUID from "../utils/generateUUID";
 const initialValues = {
   currency: [
     {
-      simbolo: "R$",
+      simbolo: "BRL",
       nomeFormatado: "Real Brasileiro",
       tipoMoeda: "A",
-      quantity: 10000000
+      quantity: 100000.00 
     }
   ]
 };
