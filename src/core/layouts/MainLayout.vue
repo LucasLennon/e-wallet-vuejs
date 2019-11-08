@@ -2,9 +2,7 @@
   <v-flex class="grey lighten-3">
     <MainDrawer v-model="drawer" />
     <MainAppBar v-model="drawer" />
-    <v-container>
-      <slot />
-    </v-container>
+    <slot />
   </v-flex>
 </template>
 <script>
