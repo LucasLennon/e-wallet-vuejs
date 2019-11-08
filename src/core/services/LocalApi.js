@@ -1,6 +1,24 @@
 import { openDB } from "idb";
 import generateUUID from "../utils/generateUUID";
 
+var transactionModel = {
+  userId: "123d0446-eead-44aa-9a2f-65098e44836b",
+  id: "5ce7fbaa-2939-424e-b4c2-aad7f54104d2",
+  type: "exchange",
+  created_at: new Date().toISOString(),
+  receive: {
+    simbolo: "BRL",
+    nomeFormatado: "Real Brasileiro",
+    tipoMoeda: "A",
+    quantity: (37829.98984).toString().replace(/\D/, ",")
+  },
+  send: {
+    simbolo: "BitCoin",
+    nomeFormatado: "BitCoin",
+    quantity: 1
+  }
+};
+
 const initialValues = {
   currency: [
     {
@@ -12,7 +30,95 @@ const initialValues = {
   ]
 };
 
-class Token {
+class Transactions {
+  async saveTransaction(payload){
+    const transaction = {
+      userId: payload.userId,
+      id: generateUUID(),
+      type: payload.type,
+      created_at: new Date().toISOString(),
+    };
+
+    if (payload.receive) {
+      transaction.receive = payload.receive;
+    }
+    if (payload.send) {
+      transaction.send = payload.send;
+    }
+
+    const savedTransaction = await this.db.add("transactions", transaction);
+    const findUser = await this.findUser({ id: transaction.userId });
+
+    if (payload.receive) {
+      await this.userReceivingCurrency();
+    }
+    if (payload.send) {
+      await this.userSendingCurrency();
+    }
+
+    // const savedToUser = await this.updateUserCurrency(
+    //   transaction
+    // );
+    return Promise.resolve({
+      status: 200,
+      data: savedTransaction
+    });
+  }
+  async getUserTransactions(user){
+    let transactions = await this.db.getAll("transactions");
+    return transactions.find(item => {
+      if (item.userId === user.id) {
+        return Promise.resolve(item);
+      }
+    });
+  }
+  async userReceivingCurrency(transaction){
+    const findUser = await this.findUser({ id: transaction.userId });
+    
+  }
+  async userSendingCurrency(transaction){
+    const findUser = await this.findUser({ id: transaction.userId });
+
+  }
+  async updateUserCurrency(transaction){
+    const findUser = await this.findUser({ id: transaction.userId });
+    var cursor = await this.db.transaction("users").store.openCursor();    
+    while(cursor){
+      if (cursor.value.id === findUser.id) {
+        this.db.put(
+          "users",
+          Object.assign(findUser, {
+            currency: [transaction.receive]
+          }),
+          cursor.key
+        );
+      }
+      cursor = await cursor.continue();
+    }
+  }
+}
+class User extends Transactions {
+  async findUser(user) {
+    let allUsers = await this.db.getAll("users");
+    console.warn(allUsers);
+    return allUsers.find(item => {
+      if (item.id === user.id || item.email === user.email) {
+        return Promise.resolve(item);
+      }
+    });
+  }
+  async getUser(token) {
+    let allSessions = await this.db.getAll("sessions");
+    const user = allSessions.find(item => item.token === token);
+    const getUser = await this.findUser(user);
+    return Promise.resolve({
+      status: 200,
+      data: getUser
+    });
+  }
+}
+
+class Token extends User {
   async setTokenToUser(user) {
     let findUser = await this.findUser(user);
     const createToken = {
@@ -35,27 +141,8 @@ class Token {
     return Promise.resolve(createToken);
   }
 }
-class User extends Token {
-  async findUser(user) {
-    let allUsers = await this.db.getAll("users");
-    return allUsers.find(item => {
-      if (item.id === user.id || item.email === user.email) {
-        return Promise.resolve(item);
-      }
-    });
-  }
-  async getUser(token) {
-    let allSessions = await this.db.getAll("sessions");
-    const user = allSessions.find(item => item.token === token);
-    const getUser = await this.findUser(user);
-    return Promise.resolve({
-      status: 200,
-      data: getUser
-    });
-  }
-}
 
-class LocalAPI extends User {
+class LocalAPI extends Token {
   async accessDB() {
     this.db = await openDB("e-wallet", 1, {
       upgrade(db) {
@@ -63,6 +150,9 @@ class LocalAPI extends User {
           autoIncrement: true
         });
         db.createObjectStore("sessions", {
+          autoIncrement: true
+        });
+        db.createObjectStore("transactions", {
           autoIncrement: true
         });
       }
