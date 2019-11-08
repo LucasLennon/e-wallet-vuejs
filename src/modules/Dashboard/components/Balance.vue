@@ -39,14 +39,14 @@
 export default {
   name: "Balance",
   props: {
-      items: {
-          type: Array,
-          required: true
-      },
-      maxItems: {
-          type: Number,
-          default: 4
-      }
+    items: {
+      type: Array,
+      required: true
+    },
+    maxItems: {
+      type: Number,
+      default: 4
+    }
   }
 };
 </script>
