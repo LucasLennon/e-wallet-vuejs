@@ -1,31 +1,27 @@
 <template>
   <MainLayout>
-    <v-flex xs12 md6>
-      <v-card class="d-sm-flex flex-wrap">
-        <v-flex xs12 class="d-flex align-center px-5">
-          <h3>Saldo em {{currencyDisplay.nomeFormatado}}</h3>
-          <v-spacer />
-          <v-flex xs4>
-            <v-select
-              v-model="currencyDisplay"
-              :items="currencyType"
-              item-text="nomeFormatado"
-              :return-object="true"
-            />
-          </v-flex>
-        </v-flex>
-        <v-flex col v-if="userCurrency">
-          <h2>
-            <input :key="currencyDisplay.simbolo" v-currency="{currency: currencyDisplay.simbolo, locale: 'pt-BR'}" v-model="currentBalance" disabled/>
-          </h2>
-        </v-flex>
-      </v-card>
-    </v-flex>
+    <v-row>
+      <v-col cols="12" md="6" lg="6">
+        <v-col>
+          <!-- <v-row>
+            <v-col cols="6">
+              <v-btn>Botao</v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn>Botao</v-btn>
+            </v-col>
+          </v-row>-->
+          <Balance v-if="userCurrency" :items="userCurrency" />
+          
+        </v-col>
+      </v-col>
+    </v-row>
   </MainLayout>
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
 import MainLayout from "@/core/layouts/MainLayout.vue";
+import Balance from "../components/Balance";
 export default {
   name: "HomePage",
   computed: {
@@ -35,14 +31,10 @@ export default {
     })
   },
   components: {
-    MainLayout
+    MainLayout,
+    Balance
   },
   data: () => ({
-    currencyDisplay: {
-      nomeFormatado: "Real Brasileiro",
-      simbolo: "BRL",
-      tipoMoeda: "A"
-    },
     currencyType: [
       {
         nomeFormatado: "Real Brasileiro",
@@ -55,17 +47,17 @@ export default {
         tipoMoeda: "A"
       }
     ],
-    currentBalance: 0
+    currentBalance: 0,
+    totalInBitcoin: 0
   }),
   methods: {
     changeCurrency() {
       const currencyType = this.userCurrency.find(
         item => item.simbolo === this.currencyDisplay.simbolo
-      )
+      );
       if (!!currencyType) {
         this.currentBalance = currencyType.quantity;
-      }
-      else{
+      } else {
         this.currentBalance = 0;
       }
     }
