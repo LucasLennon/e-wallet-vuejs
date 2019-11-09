@@ -1,16 +1,50 @@
+import { openDB } from "idb";
 import generateUUID from "../utils/generateUUID";
-import User from "./LocalUser";
 
-class Token extends User {
+// import LocalAPI from "./LocalApi";
+import LocalUser from "./LocalUser";
+
+class LocalToken {
+  async accessDB() {
+    this.db = await openDB("e-wallet", 1);
+  }
+  // async accessDB() {
+  //   this.db = openDB("e-wallet", 1, {
+  //     upgrade(db) {
+  //       db.createObjectStore("sessions", {
+  //         autoIncrement: true
+  //       });
+  //     }
+  //   });
+  // }
+  async login(user) {
+    await this.accessDB();
+    const token = await this.setTokenToUser(user);
+    if (token) {
+      return Promise.resolve({
+        status: 200,
+        message: "Login",
+        data: token
+      });
+    } else {
+      return Promise.reject({
+        status: 404,
+        message: "No user Found"
+      });
+    }
+  }
   async setTokenToUser(user) {
-    let findUser = await this.findUser(user);
+    await this.accessDB();
+    let findUser = await LocalUser.findUser(user);
     const createToken = {
       id: findUser.id,
       token: generateUUID()
     };
+    
     let cursorSessions = await this.db
       .transaction("sessions")
       .store.openCursor();
+
     await new Promise(async resolve => {
       while (cursorSessions) {
         if (cursorSessions.value.id === createToken.id) {
@@ -25,4 +59,8 @@ class Token extends User {
   }
 }
 
-export default Token;
+if (window) {
+  window.LocalUser = new LocalToken();
+}
+
+export default new LocalToken();

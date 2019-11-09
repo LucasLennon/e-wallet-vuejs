@@ -1,4 +1,7 @@
-import LocalApi from "@/core/services/LocalApi";
+// import LocalApi from "@/core/services/LocalApi";
+import LocalUser from "@/core/services/LocalUser";
+// import LocalTransaction from "@/core/services/LocalTransaction";
+import LocalToken from "@/core/services/LocalToken";
 
 export default {
   namespaced: true,
@@ -12,15 +15,19 @@ export default {
   },
   actions: {
     async requestLogin(_, payload){
-      await LocalApi.accessDB()
-      const { data } = await LocalApi.login(payload);
-      localStorage.setItem("token", data.token);
-      return data;
+      try {
+        const { data } = await LocalToken.login(payload);
+        localStorage.setItem("token", data.token);
+        return data;
+      } catch (error) {
+        console.error(error);
+        
+      }
     },
     async requestUser({commit}){
       const token = localStorage.getItem("token")
-      await LocalApi.accessDB()
-      const { data } = await LocalApi.getUser(token);
+      // await LocalAPI.accessDB();
+      const { data } = await LocalUser.getUser(token);
       commit("SET_USER", data);
       return data;
     },
@@ -29,9 +36,9 @@ export default {
       localStorage.removeItem("token");
     },
     async registerNewUser(_, payload) {
-      await LocalApi.accessDB();
+      // await LocalAPI;
       try {
-        const response = await LocalApi.addToUsers(payload);
+        const response = await LocalUser.addToUsers(payload);
         return response;
       } catch (error) {
         throw Error(error);

@@ -1,5 +1,5 @@
+import { openDB } from "idb";
 import generateUUID from "../utils/generateUUID";
-import Transactions from "./LocalTransaction";
 
 const initialValues = {
   currency: [
@@ -12,14 +12,30 @@ const initialValues = {
   ]
 };
 
-class User extends Transactions {
+import LocalAPI from "./LocalApi";
+
+class LocalUser {
+  async accessDB() {
+    this.db = await openDB("e-wallet", 1);
+    // this.db = await openDB("e-wallet", 1, {
+    //   upgrade(db) {
+    //     db.createObjectStore("users", {
+    //       autoIncrement: true
+    //     });
+    //   }
+    // });
+  }
   async addToUsers(user) {
+    await this.accessDB()
     if (
       !!user.name === false ||
       !!user.email === false ||
       !!user.password === false
     ) {
-      throw Promise.reject("Bad Request");
+      throw Promise.reject({
+        status: 400,
+        message: "Bad request"
+      });
     }
 
     const search = await this.findUser(user);
@@ -40,6 +56,7 @@ class User extends Transactions {
     }
   }
   async updateUser(user) {
+    await this.accessDB();
     let cursor = await this.db.transaction("users").store.openCursor();
     while (cursor) {
       if (cursor.value.id === user.id) {
@@ -58,6 +75,9 @@ class User extends Transactions {
     }
   }
   async findUser(user) {
+    await this.accessDB();
+    console.warn(user);
+    
     let allUsers = await this.db.getAll("users");
     return allUsers.find(item => {
       if (item.id === user.id || item.email === user.email) {
@@ -66,6 +86,7 @@ class User extends Transactions {
     });
   }
   async getUser(token) {
+    await this.accessDB();
     let allSessions = await this.db.getAll("sessions");
     const user = allSessions.find(item => item.token === token);
     const getUser = await this.findUser(user);
@@ -76,4 +97,8 @@ class User extends Transactions {
   }
 }
 
-export default User;
+if (window) {
+  window.LocalUser = new LocalUser();
+}
+
+export default new LocalUser();

@@ -1,3 +1,4 @@
+import { openDB } from "idb";
 import generateUUID from "../utils/generateUUID";
 
 var transactionModel = {
@@ -19,13 +20,25 @@ var transactionModel = {
 };
 
 
-class Transactions {
-  async saveTransaction(payload){
+class LocalTransaction {
+  async accessDB() {
+    this.db = openDB("e-wallet", 1);
+    // this.db = openDB("e-wallet", 1, {
+    //   upgrade(db) {
+    //     db.createObjectStore("transaction", {
+    //       autoIncrement: true
+    //     });
+    //   }
+    // });
+  }
+  async saveTransaction(payload) {
+    await this.accessDB()
+    
     const transaction = {
       userId: payload.userId,
       id: generateUUID(),
       type: payload.type,
-      created_at: new Date().toISOString(),
+      created_at: new Date().toISOString()
     };
 
     if (payload.receive) {
@@ -53,7 +66,8 @@ class Transactions {
       data: savedTransaction
     });
   }
-  async getUserTransactions(user){
+  async getUserTransactions(user) {
+    await this.accessDB();
     let transactions = await this.db.getAll("transactions");
     return transactions.find(item => {
       if (item.userId === user.id) {
@@ -61,18 +75,20 @@ class Transactions {
       }
     });
   }
-  async userReceivingCurrency(transaction){
+  async userReceivingCurrency(transaction) {
+    await this.accessDB();
     const findUser = await this.findUser({ id: transaction.userId });
     console.log(findUser.currency);
   }
-  async userSendingCurrency(transaction){
+  async userSendingCurrency(transaction) {
+    await this.accessDB();
     const findUser = await this.findUser({ id: transaction.userId });
-
   }
-  async updateUserCurrency(transaction){
+  async updateUserCurrency(transaction) {
+    await this.accessDB();
     const findUser = await this.findUser({ id: transaction.userId });
-    var cursor = await this.db.transaction("users").store.openCursor();    
-    while(cursor){
+    var cursor = await this.db.transaction("users").store.openCursor();
+    while (cursor) {
       if (cursor.value.id === findUser.id) {
         this.db.put(
           "users",
@@ -87,4 +103,8 @@ class Transactions {
   }
 }
 
-export default Transactions;
+if (window) {
+  window.LocalTransaction = new LocalTransaction();
+}
+
+export default new LocalTransaction();
