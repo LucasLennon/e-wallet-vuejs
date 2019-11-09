@@ -13,8 +13,6 @@ import '@mdi/font/css/materialdesignicons.css'
 import "./modules/LoginAndRegistration";
 import "./modules/Dashboard";
 
-import "./modules/example";
-
 Vue.config.productionTip = false
 
 new Vue({
