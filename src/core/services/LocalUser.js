@@ -76,8 +76,6 @@ class LocalUser {
   }
   async findUser(user) {
     await this.accessDB();
-    console.warn(user);
-    
     let allUsers = await this.db.getAll("users");
     return allUsers.find(item => {
       if (item.id === user.id || item.email === user.email) {

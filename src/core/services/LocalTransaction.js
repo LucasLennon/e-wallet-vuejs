@@ -57,9 +57,6 @@ class LocalTransaction {
       await this.updateUserCurrency(findUser, transaction.send, "send");
     }
 
-    // const savedToUser = await this.updateUserCurrency(
-    //   transaction
-    // );
     return Promise.resolve({
       status: 200,
       data: savedTransaction
