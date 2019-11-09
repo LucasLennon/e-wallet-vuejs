@@ -1,6 +1,8 @@
 import { openDB } from "idb";
 import generateUUID from "../utils/generateUUID";
 
+import LocalUser from "./LocalUser";
+
 var transactionModel = {
   userId: "123d0446-eead-44aa-9a2f-65098e44836b",
   id: "5ce7fbaa-2939-424e-b4c2-aad7f54104d2",
@@ -10,7 +12,7 @@ var transactionModel = {
     simbolo: "BRL",
     nomeFormatado: "Real Brasileiro",
     tipoMoeda: "A",
-    quantity: (37829.98984).toString().replace(/\D/, ",")
+    quantity: 37829.98984
   },
   send: {
     simbolo: "BitCoin",
@@ -19,21 +21,18 @@ var transactionModel = {
   }
 };
 
+// function transformValue(value) {
+//   return value.toString().replace(/\D/, ",")
+// }
+
 
 class LocalTransaction {
   async accessDB() {
-    this.db = openDB("e-wallet", 1);
-    // this.db = openDB("e-wallet", 1, {
-    //   upgrade(db) {
-    //     db.createObjectStore("transaction", {
-    //       autoIncrement: true
-    //     });
-    //   }
-    // });
+    this.db = await openDB("e-wallet", 1);
   }
   async saveTransaction(payload) {
-    await this.accessDB()
-    
+    await this.accessDB();
+
     const transaction = {
       userId: payload.userId,
       id: generateUUID(),
@@ -49,13 +48,13 @@ class LocalTransaction {
     }
 
     const savedTransaction = await this.db.add("transactions", transaction);
-    const findUser = await this.findUser({ id: transaction.userId });
+    const findUser = await LocalUser.findUser({ id: transaction.userId });
 
     if (payload.receive) {
-      await this.userReceivingCurrency(findUser, transaction);
+      await this.userReceivingCurrency(findUser, transaction.receive);
     }
     if (payload.send) {
-      await this.userSendingCurrency(findUser, transaction);
+      await this.userSendingCurrency(findUser, transaction.send);
     }
 
     // const savedToUser = await this.updateUserCurrency(
@@ -75,32 +74,67 @@ class LocalTransaction {
       }
     });
   }
-  async userReceivingCurrency(transaction) {
+  async userReceivingCurrency(user, transaction) {
     await this.accessDB();
-    const findUser = await this.findUser({ id: transaction.userId });
-    console.log(findUser.currency);
-  }
-  async userSendingCurrency(transaction) {
-    await this.accessDB();
-    const findUser = await this.findUser({ id: transaction.userId });
-  }
-  async updateUserCurrency(transaction) {
-    await this.accessDB();
-    const findUser = await this.findUser({ id: transaction.userId });
-    var cursor = await this.db.transaction("users").store.openCursor();
-    while (cursor) {
-      if (cursor.value.id === findUser.id) {
-        this.db.put(
-          "users",
-          Object.assign(findUser, {
-            currency: [transaction.receive]
-          }),
-          cursor.key
-        );
+
+    await user.currency.find(item => {
+      if (
+        item.simbolo == transaction.simbolo &&
+        item.tipoMoeda === transaction.tipoMoeda
+      ) {
+        var currentValue = Number(item.quantity);
+        var newValue = Number(transaction.quantity);
+        console.log(currentValue, newValue);
+
+        item.quantity = currentValue + newValue;
       }
-      cursor = await cursor.continue();
-    }
+    });
+
+    await LocalUser.updateUser(user);
+
+    return true;
   }
+  async userSendingCurrency(user, transaction) {
+    await this.accessDB();
+
+    await user.currency.find(item => {
+      if (
+        item.simbolo == transaction.simbolo &&
+        item.tipoMoeda === transaction.tipoMoeda
+      ) {
+        var currentValue = Number(item.quantity);
+        var newValue = Number(transaction.quantity);
+        console.log(currentValue, newValue);
+
+        item.quantity = currentValue - newValue;
+      }
+    });
+
+    await LocalUser.updateUser(user);
+
+    return true;
+  }
+  // async userSendingCurrency(transaction) {
+  //   await this.accessDB();
+  //   const findUser = await LocalUser.findUser({ id: transaction.userId });
+  // }
+  // async updateUserCurrency(transaction) {
+  //   await this.accessDB();
+  //   const findUser = await LocalUser.findUser({ id: transaction.userId });
+  //   var cursor = await this.db.transaction("users").store.openCursor();
+  //   while (cursor) {
+  //     if (cursor.value.id === findUser.id) {
+  //       this.db.put(
+  //         "users",
+  //         Object.assign(findUser, {
+  //           currency: [transaction.receive]
+  //         }),
+  //         cursor.key
+  //       );
+  //     }
+  //     cursor = await cursor.continue();
+  //   }
+  // }
 }
 
 if (window) {
