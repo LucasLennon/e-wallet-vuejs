@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from '@/core/App.vue'
 
 import LocalAPI from "@/core/services/LocalApi";
+new LocalAPI();
 
 import router from './core/router'
 import store from './core/store'

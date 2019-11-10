@@ -12,8 +12,6 @@ const initialValues = {
   ]
 };
 
-import LocalAPI from "./LocalApi";
-
 class LocalUser {
   async accessDB() {
     this.db = await openDB("e-wallet", 1);
@@ -25,8 +23,8 @@ class LocalUser {
     //   }
     // });
   }
-  async addToUsers(user) {
-    await this.accessDB()
+  async addUser(user) {
+    await this.accessDB();
     if (
       !!user.name === false ||
       !!user.email === false ||

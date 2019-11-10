@@ -1,7 +1,6 @@
 import { openDB } from "idb";
 import generateUUID from "../utils/generateUUID";
 
-// import LocalAPI from "./LocalApi";
 import LocalUser from "./LocalUser";
 
 class LocalToken {

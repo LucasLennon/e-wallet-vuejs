@@ -38,7 +38,7 @@ export default {
     async registerNewUser(_, payload) {
       // await LocalAPI;
       try {
-        const response = await LocalUser.addToUsers(payload);
+        const response = await LocalUser.addUser(payload);
         return response;
       } catch (error) {
         throw Error(error);

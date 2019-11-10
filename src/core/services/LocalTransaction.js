@@ -3,29 +3,6 @@ import generateUUID from "../utils/generateUUID";
 
 import LocalUser from "./LocalUser";
 
-var transactionModel = {
-  userId: "123d0446-eead-44aa-9a2f-65098e44836b",
-  id: "5ce7fbaa-2939-424e-b4c2-aad7f54104d2",
-  type: "exchange",
-  created_at: new Date().toISOString(),
-  receive: {
-    simbolo: "BRL",
-    nomeFormatado: "Real Brasileiro",
-    tipoMoeda: "A",
-    quantity: 37829.98984
-  },
-  send: {
-    simbolo: "BitCoin",
-    nomeFormatado: "BitCoin",
-    quantity: 1
-  }
-};
-
-// function transformValue(value) {
-//   return value.toString().replace(/\D/, ",")
-// }
-
-
 class LocalTransaction {
   async accessDB() {
     this.db = await openDB("e-wallet", 1);
