@@ -77,6 +77,14 @@ class LocalTransaction {
           item.quantity = currentValue - newValue;
         }
       }
+      else{
+        if (type === "receive") {
+          user.currency.push(transaction);
+        }
+        // if (type === "send") {
+        //   user.currency = currentValue - newValue;
+        // }
+      }
     });
 
     await LocalUser.updateUser(user);
