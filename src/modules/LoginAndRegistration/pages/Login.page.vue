@@ -7,17 +7,17 @@
           <v-icon class="ml-5">fa-arrow-right</v-icon>
         </v-btn>
       </v-flex>
-      <v-card class="pa-5" :loading="loading" min-width="100%">
-        <v-col>
+      <v-card :loading="loading" min-width="100%">
+        <v-flex col class="pa-3">
           <CardTitle name="Login" />
           <v-divider />
-        </v-col>
-        <v-col>
+        </v-flex>
+        <v-flex col class="pa-3">
           <v-form class v-model="formValid" @submit.prevent="submit">
             <FormLogin v-model="form" />
             <v-btn type="submit" color="primary" block :disabled="!formValid">Logar</v-btn>
           </v-form>
-        </v-col>
+        </v-flex>
       </v-card>
       <BaseAlert v-model="notification"/>
     </v-flex>
@@ -49,7 +49,7 @@ export default {
     }
   }),
   methods: {
-    ...mapActions("loginAndRegistration", ["requestLogin"]),
+    ...mapActions("loginAndRegistration", ["requestLogin", "requestUser"]),
     async submit() {
       this.loading = true;
       try {
@@ -59,9 +59,8 @@ export default {
         this.notification = {
           active: true,
           type: "error",
-          message: "Informações invalidas, verifique suas informações."
+          message: "Informações invalidas, por favor verifique."
         };
-        // console.error(error);
       } finally {
         this.loading = false;
       }

@@ -28,7 +28,7 @@
           color="primary--text"
           block
           link
-          @click="requestLogout"
+          @click="logout"
         >Logout</v-btn>
       </v-list-item>
     </template>
@@ -62,7 +62,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions('login', ['requestLogout']),
+    ...mapActions('loginAndRegistration', ['requestLogout']),
+    logout(){
+      this.requestLogout()
+      this.$router.push({ name: "loginPage" })
+    }
   }
 };
 </script>
