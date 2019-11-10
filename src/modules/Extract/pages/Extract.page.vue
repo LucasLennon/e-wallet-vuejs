@@ -1,13 +1,14 @@
 <template>
   <MainLayout>
     <v-container>
-      <!-- Filters -->
-      <v-row></v-row>
       <!-- List -->
       <v-row>
         <v-col cols="12">
           <v-card>
-            <ExtractList />
+            <ExtractList v-if="transactions && transactions.length > 0" :items="transactions" />
+            <p class="display-1 text-center primary--text py-5 ma-0" v-else>
+              Nenhuma transação encontrada.
+            </p>
           </v-card>
         </v-col>
       </v-row>
