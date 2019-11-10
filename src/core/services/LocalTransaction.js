@@ -42,6 +42,12 @@ class LocalTransaction {
   async getUserTransactions(user) {
     await this.accessDB();
     let transactions = await this.db.getAll("transactions");
+    if (transactions.length === 0) {
+      return Promise.resolve({
+        status: 200,
+        data: []
+      });
+    }
     return transactions.find(item => {
       if (item.userId === user.id) {
         return Promise.resolve({
