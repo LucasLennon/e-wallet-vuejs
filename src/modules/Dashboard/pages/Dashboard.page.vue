@@ -1,21 +1,12 @@
 <template>
   <MainLayout>
-    <v-row>
-      <v-col cols="12" md="6" lg="6">
-        <v-col>
-          <!-- <v-row>
-            <v-col cols="6">
-              <v-btn>Botao</v-btn>
-            </v-col>
-            <v-col cols="6">
-              <v-btn>Botao</v-btn>
-            </v-col>
-          </v-row>-->
+    <v-container>
+      <v-row>
+        <v-col cols="12" md="6" lg="6">
           <Balance :items="userCurrencyList" />
-          
         </v-col>
-      </v-col>
-    </v-row>
+      </v-row>
+    </v-container>
   </MainLayout>
 </template>
 <script>
