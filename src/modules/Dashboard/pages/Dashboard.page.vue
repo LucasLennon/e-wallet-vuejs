@@ -11,7 +11,7 @@
               <v-btn>Botao</v-btn>
             </v-col>
           </v-row>-->
-          <Balance v-if="userCurrency" :items="userCurrency" />
+          <Balance :items="userCurrencyList" />
           
         </v-col>
       </v-col>
@@ -26,8 +26,7 @@ export default {
   name: "HomePage",
   computed: {
     ...mapState("loginAndRegistration", {
-      userCurrency: state =>
-        !!state.user && !!state.user.currency ? state.user.currency : null
+      userCurrencyList: state => state.userCurrencyList
     })
   },
   components: {
@@ -50,35 +49,5 @@ export default {
     currentBalance: 0,
     totalInBitcoin: 0
   }),
-  methods: {
-    changeCurrency() {
-      const currencyType = this.userCurrency.find(
-        item => item.simbolo === this.currencyDisplay.simbolo
-      );
-      if (!!currencyType) {
-        this.currentBalance = currencyType.quantity;
-      } else {
-        this.currentBalance = 0;
-      }
-    }
-  },
-  watch: {
-    currencyDisplay: {
-      handler: function(value) {
-        if (!!this.userCurrency) {
-          this.changeCurrency();
-        }
-      },
-      immediate: true
-    },
-    userCurrency: {
-      handler: function(value) {
-        if (!!value) {
-          this.changeCurrency();
-        }
-      },
-      immediate: true
-    }
-  }
 };
 </script>
