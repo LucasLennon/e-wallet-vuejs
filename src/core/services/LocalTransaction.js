@@ -42,10 +42,21 @@ class LocalTransaction {
   async getUserTransactions(user) {
     await this.accessDB();
     let transactions = await this.db.getAll("transactions");
-    return transactions.find(item => {
+    if (transactions.length === 0) {
+      return Promise.resolve({
+        status: 200,
+        data: []
+      });
+    }
+    const allUserTransactions = []
+    await transactions.find(item => {
       if (item.userId === user.id) {
-        return Promise.resolve(item);
+        allUserTransactions.push(item);
       }
+    });
+    return Promise.resolve({
+      status: 200,
+      data: allUserTransactions
     });
   }
   async updateUserCurrency(user, transaction, type) {
@@ -65,6 +76,14 @@ class LocalTransaction {
         if (type === "send") {
           item.quantity = currentValue - newValue;
         }
+      }
+      else{
+        if (type === "receive") {
+          user.currency.push(transaction);
+        }
+        // if (type === "send") {
+        //   user.currency = currentValue - newValue;
+        // }
       }
     });
 

@@ -9,14 +9,13 @@
     
     <v-list-item :key="key" v-for="(item, key) of drawerItens">
       <v-btn
-        class="justify-start"
+        class="justify-start white--text"
         block
-        exact-active-class="white--text"
         text
         link
         :to="{ name: item.name }"
       >
-        <v-icon class="mr-5">{{ item.icon }}</v-icon>
+        <v-icon class="mr-5" style="width:30px;">{{ item.icon }}</v-icon>
         {{ item.title }}
       </v-btn>
     </v-list-item>
