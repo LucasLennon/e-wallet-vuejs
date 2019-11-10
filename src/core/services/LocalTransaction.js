@@ -48,13 +48,15 @@ class LocalTransaction {
         data: []
       });
     }
-    return transactions.find(item => {
+    const allUserTransactions = []
+    await transactions.find(item => {
       if (item.userId === user.id) {
-        return Promise.resolve({
-          status: 200,
-          data: item
-        });
+        allUserTransactions.push(item);
       }
+    });
+    return Promise.resolve({
+      status: 200,
+      data: allUserTransactions
     });
   }
   async updateUserCurrency(user, transaction, type) {
