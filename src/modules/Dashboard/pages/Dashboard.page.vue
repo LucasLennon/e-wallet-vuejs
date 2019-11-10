@@ -40,5 +40,11 @@ export default {
     currentBalance: 0,
     totalInBitcoin: 0
   }),
+  created(){
+    this.getBitcoinInfo()
+  },
+  methods: {
+    ...mapActions(['getBitcoinInfo'])
+  }
 };
 </script>
