@@ -15,6 +15,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import "./modules/LoginAndRegistration";
 import "./modules/Dashboard";
+import "./modules/Exchange";
 import "./modules/Extract";
 
 Vue.config.productionTip = false
