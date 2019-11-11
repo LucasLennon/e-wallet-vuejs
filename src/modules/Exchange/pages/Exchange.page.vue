@@ -3,8 +3,10 @@
     <v-container>
       <v-card>
         <v-form v-model="valid">
-          <ExchangeSend v-model="send" />
-          <ExchangeReceive v-model="receive" />
+          <ExchangeSend v-model="send" :user="currentUser" />
+          <v-divider />
+          <!-- <ExchangeReceive v-model="receive" /> -->
+          <v-divider />
           <v-row no-gutters class="pa-5" justify="end">
             <v-col cols="12" md="6" class="d-flex justify-end">
               <v-btn color="success" type="submit">Trocar</v-btn>
