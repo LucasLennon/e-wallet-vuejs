@@ -42,9 +42,10 @@ export default {
   }),
   created(){
     this.getBitcoinInfo()
+    this.getDolarInfo()
   },
   methods: {
-    ...mapActions(['getBitcoinInfo'])
+    ...mapActions(['getBitcoinInfo', 'getDolarInfo'])
   }
 };
 </script>

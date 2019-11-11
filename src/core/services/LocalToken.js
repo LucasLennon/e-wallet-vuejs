@@ -50,6 +50,7 @@ class LocalToken {
           await this.db.delete("sessions", cursorSessions.key);
           resolve();
         }
+        cursorSessions = await cursorSessions.continue();
       }
       resolve();
     });
