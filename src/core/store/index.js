@@ -17,10 +17,10 @@ export default new Vuex.Store({
       state.drawerItens.push(payload);
     },
     SET_BITCOIN_INFO(state, payload) {
-      state.bitcoinInfo.push(payload);
+      state.bitcoinInfo = payload;
     },
     SET_DOLAR_INFO(state, payload) {
-      state.dolarInfo.push(payload);
+      state.dolarInfo = payload;
     }
   },
   actions: {
