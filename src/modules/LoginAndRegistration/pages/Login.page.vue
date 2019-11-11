@@ -54,6 +54,7 @@ export default {
       this.loading = true;
       try {
         await this.requestLogin(this.form);
+        await this.requestUser();
         this.$router.push({ name: "dashboardPage" });
       } catch (error) {
         this.notification = {
