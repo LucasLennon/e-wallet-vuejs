@@ -3,10 +3,21 @@
     <v-col cols="12" sm="6">
       <v-row>
         <v-col cols="12">
-          Saldo em Conta: <currency-input :currency="currentCurrency.simbolo" locale="pt-BR" :value="maxValue" disabled/>
+          Saldo em Conta:
+          <currency-input
+            :currency="currentCurrency.simbolo"
+            locale="pt-BR"
+            :value="currentCurrency.quantity"
+            disabled
+          />
         </v-col>
         <v-col cols="12">
-          <v-select v-model="currentCurrency" :items="currencyTypes" item-text="nomeFormatado" :return-object="true"/>
+          <v-select
+            v-model="currentCurrency"
+            :items="userCurrencyList"
+            item-text="nomeFormatado"
+            :return-object="true"
+          />
         </v-col>
       </v-row>
     </v-col>
@@ -15,49 +26,55 @@
         <h4 class="text-end" style="width: 100%;">Você envia</h4>
       </v-row>
       <v-row>
-        <currency-input :currency="currentCurrency.simbolo" locale="pt-BR" :distraction-free="false" class="headline text-end" v-model="currentCurrency.quantity" :min="0" :max="maxValue" style="width: 100%;"/>
+        <currency-input
+          :currency="currentCurrency.simbolo"
+          locale="pt-BR"
+          :distraction-free="false"
+          class="headline text-end"
+          v-model="currentQuantity"
+          :min="0"
+          :max="currentCurrency.quantity"
+          style="width: 100%;"
+        />
       </v-row>
     </v-col>
   </v-row>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
-import { log } from 'util';
 export default {
-  name: "ExchangeValue",
+  name: "ExchangeSend",
   props: {
-    value: {
+    userCurrencyList: {
+      type: Array
+    },
+    currencyType: {
       type: Object
     },
-    user: {
-      type: Object
+    quantity: {
+      type: Number
     }
   },
   computed: {
-    ...mapState({
-      currencyTypes: state => state.currencyTypes
-    }),
-    currentCurrency:{
-      get(){
-        if (this.user) {
-          if (!!this.value.quantity === false) {
-            this.value.quantity = 0;
-          }
-          return this.value;
-        }
+    currentQuantity: {
+      get() {
+        return this.quantity;
       },
-      set(value){
-        this.maxValue
-        this.$emit('input', value)
+      set(value) {
+        this.$emit('update:changeQuantity', value)
       }
     },
-    maxValue(){
-      let currency = this.user.currency.find(item => item.nomeFormatado === this.currentCurrency.nomeFormatado)
-      if (currency) {
-        return currency.quantity || 0;
+    currentCurrency: {
+      get(){
+        return this.currencyType
+      },
+      set(value){
+        this.$emit('update:currencyType', value)
       }
-      return 0;
-    }
+    },
   },
+  mounted(){
+    this.currentCurrency = this.userCurrencyList[0];
+  }
 };
 </script>
