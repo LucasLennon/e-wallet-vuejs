@@ -2,7 +2,11 @@
   <MainLayout>
     <v-container>
       <v-card>
-        <v-form v-model="valid" v-if="currentUser && currentUser.currency">
+        <v-form
+          v-model="valid"
+          v-if="currentUser && currentUser.currency"
+          @submit.prevent="makeTransaction"
+        >
           <ExchangeSend
             :userCurrencyList="currentUser.currency"
             :quantity="sendCurrencyQuantity"
@@ -13,7 +17,7 @@
           <v-divider />
           <ExchangeReceive
             :userCurrencyList="currentUser.currency"
-            :listCurrencyTypes="currenciesToReceive"
+            :listCurrencyTypes="currencyTypes"
             :quantity="receiveCurrencyQuantity"
             :currencyType="receiveCurrencyType"
             @update:currencyType="(value) => receiveCurrencyType = value"
@@ -26,6 +30,7 @@
             </v-col>
           </v-row>
         </v-form>
+        <BaseAlert v-model="notification" />
       </v-card>
     </v-container>
   </MainLayout>
@@ -50,26 +55,29 @@ export default {
       dolarInfo: state => state.dolarInfo,
       bitcoinInfo: state => state.bitcoinInfo
     }),
-    // currenciesToSend(){
-    //   if (this.currentUser) {
-    //     return this.currentUser.currency.filter(item => !!item.quantity);
-    //   }
-    // },
-    observeChanges(){
+    observeChanges() {
       return [
         this.sendCurrencyQuantity,
         this.sendCurrencyType,
-        this.receiveCurrencyQuantity,
+        // this.receiveCurrencyQuantity,
         this.receiveCurrencyType
-      ]
+      ];
     },
-    currenciesToReceive(){
+    currenciesToReceive() {
       if (this.currentUser) {
-        return this.currencyTypes.filter(item => item.simbolo !== this.sendCurrencyType.simbolo)
+        return this.currencyTypes.filter(
+          item => item.simbolo !== this.sendCurrencyType.simbolo
+        );
       }
     }
   },
   data: () => ({
+    rerender: 0,
+    notification: {
+      active: false,
+      message: null,
+      type: null
+    },
     sendCurrencyQuantity: 0,
     sendCurrencyType: null,
     receiveCurrencyQuantity: 0,
@@ -77,56 +85,91 @@ export default {
     valid: false
   }),
   methods: {
+    ...mapActions("loginAndRegister", ["requestUser"]),
     ...mapActions("exchange", ["requestTransaction"]),
     async makeTransaction() {
       const transaction = {
-        userId: currentUser.id,
+        userId: this.currentUser.id,
         type: "Troca de Moeda",
-        receive: this.receive,
-        send: this.send
+        receive: {
+          ...this.receiveCurrencyType,
+          quantity: this.receiveCurrencyQuantity
+        },
+        send: {
+          ...this.sendCurrencyType,
+          quantity: this.sendCurrencyQuantity
+        }
       };
+      try {
+        await this.requestTransaction(transaction);
+        await this.requestUser()
+        this.notification = {
+          active: true,
+          message: "Sucesso na Troca de moeda.",
+          type: "success"
+        };
+      } catch (err) {
+        this.notification = {
+          active: true,
+          message: "Ocorreu um erro, tente novamente.",
+          type: "error"
+        };
+      } finally {
+        this.$forceUpdate()
+      }
     },
-    checkReceiveValue(value) {
-    
+    adjustSendValue(sendValue) {
+      if (this.sendCurrencyType.simbolo === "XBC") {
+        return this.exchangeFromBitcoinValue(sendValue);
+      }
+      if (
+        this.sendCurrencyType.simbolo === "USD" ||
+        this.sendCurrencyType.simbolo === "XBT"
+      ) {
+        return this.exchangeFromDolarValue(sendValue);
+      }
+      return sendValue;
+    },
+    checkReceiveValue(sendValue) {
+      const correctedValue = this.adjustSendValue(sendValue);
+
       if (this.receiveCurrencyType.simbolo === "XBC") {
         this.receiveCurrencyQuantity = this.exchangeToBitcoinValue(
-          value
+          correctedValue
         );
+        return true;
       }
       if (
         this.receiveCurrencyType.simbolo === "USD" ||
         this.receiveCurrencyType.simbolo === "XBT"
       ) {
         this.receiveCurrencyQuantity = this.exchangeToDolarValue(
-          value
+          correctedValue
         );
+        return true;
       }
+      this.receiveCurrencyQuantity = correctedValue;
     },
-    // checkSendValue(value){
-    //   if (this.send.simbolo === "XBC") {
-    //     this.send.quantity = this.exchangeFromBitcoinValue(value.quantity)
-    //   }
-    //   if (this.send.simbolo === "USD" || this.send.simbolo === "XBT") {
-    //     this.send.quantity = this.exchangeFromDolarValue(value.quantity)
-    //   }
-    // },
     exchangeToDolarValue(value) {
       return value / this.dolarInfo[this.dolarInfo.length - 1].cotacaoCompra;
     },
     exchangeFromDolarValue(value) {
-      return this.dolarInfo[this.dolarInfo.length - 1].cotacaoCompra / value;
+      return value * this.dolarInfo[this.dolarInfo.length - 1].cotacaoVenda;
     },
     exchangeToBitcoinValue(value) {
-      return value / this.bitcoinInfo.buy;
+      return value / this.bitcoinInfo.high;
     },
     exchangeFromBitcoinValue(value) {
-      return this.bitcoinInfo.sell / value;
+      return value * this.bitcoinInfo.low;
     },
-    preventExchange(){
-      if (this.receiveCurrencyQuantity === 0 || this.sendCurrencyQuantity === 0) {
-        return true
+    preventExchange() {
+      if (
+        this.receiveCurrencyQuantity === 0 ||
+        this.sendCurrencyQuantity === 0
+      ) {
+        return true;
       }
-      return false
+      return false;
     }
   },
   watch: {
