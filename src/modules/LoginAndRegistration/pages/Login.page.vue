@@ -25,13 +25,11 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-import BaseAlert from "@/core/components/BaseAlert";
 import CardTitle from "../components/CardTitle";
 import FormLogin from "../components/FormLogin";
 export default {
   name: "LoginPage",
   components: {
-    BaseAlert,
     CardTitle,
     FormLogin
   },

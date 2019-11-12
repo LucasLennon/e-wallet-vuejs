@@ -33,14 +33,12 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-import BaseAlert from "@/core/components/BaseAlert";
 import CardTitle from "../components/CardTitle";
 import FormUserAvatar from "../components/FormUserAvatar";
 import FormUserInfo from "../components/FormUserInfo";
 export default {
   name: "RegistrationPage",
   components: {
-    BaseAlert,
     CardTitle,
     FormUserAvatar,
     FormUserInfo
