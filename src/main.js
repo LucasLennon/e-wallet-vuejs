@@ -13,6 +13,8 @@ import './core/plugins/vue-currency-input';
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
+import "./core/components/Base";
+
 import "./modules/LoginAndRegistration";
 import "./modules/Dashboard";
 import "./modules/Exchange";
