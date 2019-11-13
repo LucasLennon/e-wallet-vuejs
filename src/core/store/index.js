@@ -8,6 +8,28 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    currencyTypes: [
+      {
+        simbolo: "BRL",
+        nomeFormatado: "Real Brasileiro",
+        tipoMoeda: "A"
+      },
+      {
+        simbolo: "XBC",
+        nomeFormatado: "BitCoin",
+        tipoMoeda: "A"
+      },
+      {
+        simbolo: "USD",
+        nomeFormatado: "Dólar Americano",
+        tipoMoeda: "A"
+      },
+      {
+        simbolo: "XBT",
+        nomeFormatado: "Britas",
+        tipoMoeda: "A"
+      }
+    ],
     dolarInfo: null,
     bitcoinInfo: null,
     drawerItens: []

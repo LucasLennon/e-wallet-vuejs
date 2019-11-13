@@ -11,10 +11,10 @@
               <p class="pa-0 ma-0">{{item.nomeFormatado}}</p>
             </v-col>
             <v-col>
-              <input
+              <currency-input
                 class="headling text-end font-weight-bold"
                 v-currency="{currency: item.simbolo, locale: 'pt-BR'}"
-                v-model.lazy="item.quantity"
+                :value="item.quantity"
                 style="width: 100%;"
                 disabled
               />
