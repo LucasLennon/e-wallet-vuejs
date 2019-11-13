@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="items">
     <v-card-title class="primary white--text">
-      <h3>Saldo</h3>
+      <h3>Saldos por moeda</h3>
     </v-card-title>
     <v-list>
       <template v-for="(item, key) of listItems">
@@ -23,18 +23,6 @@
         </v-list-item>
       </template>
     </v-list>
-    <v-divider />
-    <v-card-actions class="pa-0">
-      <v-row class="ma-0">
-        <v-col align-self="center">Total in Bitcoin: {{totalInBitcoin}}</v-col>
-        <v-col class="d-flex justify-end">
-          <v-btn text class="secondary--text">
-            Moedas
-            <v-icon class="ml-5">fa-caret-right</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card-actions>
   </v-card>
 </template>
 <script>
