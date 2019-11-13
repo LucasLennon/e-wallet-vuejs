@@ -8,25 +8,34 @@
           @submit.prevent="makeTransaction"
         >
           <ExchangeSend
-            :userCurrencyList="currentUser.currency"
+            :userCurrencyList="currenciesToSend"
             :quantity="sendCurrencyQuantity"
             :currencyType="sendCurrencyType"
-            @update:currencyType="(value) => sendCurrencyType = value"
-            @update:changeQuantity="(value) => sendCurrencyQuantity = value"
+            @update:currencyType="value => (sendCurrencyType = value)"
+            @update:changeQuantity="value => (sendCurrencyQuantity = value)"
+            :key="contentSend + 100"
           />
           <v-divider />
           <ExchangeReceive
+            v-if="sendCurrencyType"
             :userCurrencyList="currentUser.currency"
-            :listCurrencyTypes="currencyTypes"
+            :listCurrencyTypes="currenciesToReceive"
             :quantity="receiveCurrencyQuantity"
             :currencyType="receiveCurrencyType"
-            @update:currencyType="(value) => receiveCurrencyType = value"
-            @update:changeQuantity="(value) => receiveCurrencyQuantity = value"
+            @update:currencyType="value => (receiveCurrencyType = value)"
+            @update:changeQuantity="value => (receiveCurrencyQuantity = value)"
+            :key="contentReceive + 1"
           />
           <v-divider />
           <v-row no-gutters class="pa-5" justify="end">
             <v-col cols="12" md="6" class="d-flex justify-end">
-              <v-btn color="success" type="submit" :disabled="preventExchange()">Trocar</v-btn>
+              <v-btn
+                class="exchangeButton"
+                color="success"
+                type="submit"
+                :disabled="preventExchange()"
+                >Trocar</v-btn
+              >
             </v-col>
           </v-row>
         </v-form>
@@ -52,19 +61,21 @@ export default {
     ...mapState({
       currentUser: state => state.loginAndRegistration.user,
       currencyTypes: state => state.currencyTypes,
-      dolarInfo: state => state.dolarInfo,
+      dolarInfo: state => state.dolarInfo[state.dolarInfo.length - 1],
       bitcoinInfo: state => state.bitcoinInfo
     }),
     observeChanges() {
       return [
         this.sendCurrencyQuantity,
         this.sendCurrencyType,
-        // this.receiveCurrencyQuantity,
         this.receiveCurrencyType
       ];
     },
+    currenciesToSend() {
+      return this.currentUser.currency.filter(item => item.quantity > 0);
+    },
     currenciesToReceive() {
-      if (this.currentUser) {
+      if (this.sendCurrencyType) {
         return this.currencyTypes.filter(
           item => item.simbolo !== this.sendCurrencyType.simbolo
         );
@@ -72,20 +83,21 @@ export default {
     }
   },
   data: () => ({
-    rerender: 0,
+    contentSend: 0,
+    contentReceive: 0,
     notification: {
       active: false,
       message: null,
       type: null
     },
     sendCurrencyQuantity: 0,
-    sendCurrencyType: null,
     receiveCurrencyQuantity: 0,
+    sendCurrencyType: null,
     receiveCurrencyType: null,
     valid: false
   }),
   methods: {
-    ...mapActions("loginAndRegister", ["requestUser"]),
+    ...mapActions("loginAndRegistration", ["requestUser"]),
     ...mapActions("exchange", ["requestTransaction"]),
     async makeTransaction() {
       const transaction = {
@@ -102,7 +114,7 @@ export default {
       };
       try {
         await this.requestTransaction(transaction);
-        await this.requestUser()
+        await this.requestUser();
         this.notification = {
           active: true,
           message: "Sucesso na Troca de moeda.",
@@ -115,10 +127,17 @@ export default {
           type: "error"
         };
       } finally {
-        this.$forceUpdate()
+        this.sendCurrencyType.quantity = this.currentUser.currency.find(
+          item => item.simbolo === this.sendCurrencyType.simbolo
+        ).quantity;
+        this.contentSend += 1;
+        this.contentReceive += 1;
+        if (this.sendCurrencyType.quantity < 0) {
+          this.sendCurrencyType = null;
+        }
       }
     },
-    adjustSendValue(sendValue) {
+    defineSendValue(sendValue) {
       if (this.sendCurrencyType.simbolo === "XBC") {
         return this.exchangeFromBitcoinValue(sendValue);
       }
@@ -130,8 +149,8 @@ export default {
       }
       return sendValue;
     },
-    checkReceiveValue(sendValue) {
-      const correctedValue = this.adjustSendValue(sendValue);
+    defineReceiveValue(sendValue) {
+      const correctedValue = this.defineSendValue(sendValue);
 
       if (this.receiveCurrencyType.simbolo === "XBC") {
         this.receiveCurrencyQuantity = this.exchangeToBitcoinValue(
@@ -149,12 +168,13 @@ export default {
         return true;
       }
       this.receiveCurrencyQuantity = correctedValue;
+      return true;
     },
     exchangeToDolarValue(value) {
-      return value / this.dolarInfo[this.dolarInfo.length - 1].cotacaoCompra;
+      return value / this.dolarInfo.cotacaoCompra;
     },
     exchangeFromDolarValue(value) {
-      return value * this.dolarInfo[this.dolarInfo.length - 1].cotacaoVenda;
+      return value * this.dolarInfo.cotacaoVenda;
     },
     exchangeToBitcoinValue(value) {
       return value / this.bitcoinInfo.high;
@@ -169,13 +189,18 @@ export default {
       ) {
         return true;
       }
+      if (this.receiveCurrencyType.simbolo === this.sendCurrencyType.simbolo) {
+        return true;
+      }
       return false;
     }
   },
   watch: {
     observeChanges: {
       handler: function(value) {
-        this.checkReceiveValue(this.sendCurrencyQuantity);
+        if (!value.includes(null)) {
+          this.defineReceiveValue(this.sendCurrencyQuantity);
+        }
       },
       deep: true
     }
