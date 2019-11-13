@@ -28,7 +28,7 @@ class LocalTransaction {
     const findUser = await LocalUser.findUser({ id: transaction.userId });
 
     if (payload.receive) {
-      await this.updateUserCurrency(findUser, transaction.receive, 'receive');
+      await this.updateUserCurrency(findUser, transaction.receive, "receive");
     }
     if (payload.send) {
       await this.updateUserCurrency(findUser, transaction.send, "send");
@@ -48,7 +48,7 @@ class LocalTransaction {
         data: []
       });
     }
-    const allUserTransactions = []
+    const allUserTransactions = [];
     await transactions.find(item => {
       if (item.userId === user.id) {
         allUserTransactions.push(item);
@@ -62,31 +62,21 @@ class LocalTransaction {
   async updateUserCurrency(user, transaction, type) {
     await this.accessDB();
 
-    await user.currency.find(item => {
-      if (
-        item.simbolo == transaction.simbolo &&
-        item.tipoMoeda === transaction.tipoMoeda
-      ) {
-        var currentValue = Number(item.quantity);
-        var newValue = Number(transaction.quantity);
+    const found = await user.currency.find(item => item.simbolo === transaction.simbolo);
 
-        if (type === "receive") {
-          item.quantity = currentValue + newValue;
-        }
-        if (type === "send") {
-          item.quantity = currentValue - newValue;
-        }
+    if (found) {
+      var currentValue = Number(found.quantity);
+      var newValue = Number(transaction.quantity);
+      if (type === "receive") {
+        found.quantity = currentValue + newValue;
       }
-      else{
-        if (type === "receive") {
-          user.currency.push(transaction);
-        }
-        // if (type === "send") {
-        //   user.currency = currentValue - newValue;
-        // }
+      if (type === "send") {
+        found.quantity = currentValue - newValue;
       }
-    });
-
+    } else {
+      user.currency.push(transaction);
+    }
+    
     await LocalUser.updateUser(user);
 
     return true;
