@@ -1,6 +1,6 @@
 <template>
   <v-container fill-height class="justify-center">
-    <v-flex xs12 sm10 md8 style="position: relative;">
+    <v-flex xs12 sm10 md8 style="position: relative; max-width:600px;">
       <v-flex class="d-flex justify-start">
         <v-btn text link :to="{ name:'loginPage' }">
           <v-icon class="mr-5">fa-arrow-left</v-icon>Login
