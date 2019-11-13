@@ -12,7 +12,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import MainLayout from "@/core/layouts/MainLayout.vue";
-import Balance from "../components/Balance";
+import Balance from "@/core/components/Balance";
 export default {
   name: "HomePage",
   computed: {
