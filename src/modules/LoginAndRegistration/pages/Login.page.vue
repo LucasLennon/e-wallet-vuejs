@@ -1,6 +1,6 @@
 <template>
   <v-container fill-height class="justify-center">
-    <v-flex xs12 sm8 md6 style="position: relative;">
+    <v-flex xs12 sm8 md6 style="position: relative; max-width:600px;">
       <v-flex class="d-flex justify-end">
         <v-btn text link :to="{ name:'registrationPage' }">
           Registro
@@ -25,13 +25,11 @@
 </template>
 <script>
 import { mapActions } from "vuex";
-import BaseAlert from "@/core/components/BaseAlert";
 import CardTitle from "../components/CardTitle";
 import FormLogin from "../components/FormLogin";
 export default {
   name: "LoginPage",
   components: {
-    BaseAlert,
     CardTitle,
     FormLogin
   },
@@ -54,6 +52,7 @@ export default {
       this.loading = true;
       try {
         await this.requestLogin(this.form);
+        await this.requestUser();
         this.$router.push({ name: "dashboardPage" });
       } catch (error) {
         this.notification = {
