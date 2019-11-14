@@ -1,10 +1,10 @@
 <template>
-  <v-card v-if="items">
+  <v-card :loading="loading">
     <v-card-title class="primary white--text">
       <h3>Saldos por moeda</h3>
     </v-card-title>
-    <v-list>
-      <template v-for="(item, key) of listItems">
+    <v-list v-if="items">
+      <template v-for="(item, key) of items">
         <v-list-item v-if="item.quantity > 0" :key="key">
           <v-row class="align-center" no-gutters>
             <v-col>
@@ -29,6 +29,10 @@
 export default {
   name: "Balance",
   props: {
+    loading: {
+      type: Boolean,
+      default: true,
+    },
     items: {
       type: Array,
     },
@@ -37,13 +41,5 @@ export default {
       default: 4
     }
   },
-  computed: {
-    listItems(){
-      return this.items.slice(0, this.maxItems)
-    }
-  },
-  data:() => ({
-    totalInBitcoin: 0,
-  }),
 };
 </script>
