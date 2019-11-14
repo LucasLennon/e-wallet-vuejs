@@ -1,6 +1,9 @@
 <template>
   <MainLayout>
     <v-container>
+      <Balance :items="currentUser.currency" />
+    </v-container>
+    <v-container>
       <v-card>
         <v-form
           v-model="valid"
@@ -47,6 +50,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import MainLayout from "@/core/layouts/MainLayout.vue";
+import Balance from "@/core/components/Balance";
 import ExchangeSend from "../components/ExchangeSend";
 import ExchangeReceive from "../components/ExchangeReceive";
 
@@ -54,6 +58,7 @@ export default {
   name: "ExchangePage",
   components: {
     MainLayout,
+    Balance,
     ExchangeSend,
     ExchangeReceive
   },

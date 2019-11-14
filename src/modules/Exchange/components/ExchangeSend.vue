@@ -2,7 +2,7 @@
   <v-row no-gutters align="center" class="pa-5">
     <v-col cols="12" sm="6">
       <v-row>
-        <v-col cols="12">
+        <!-- <v-col cols="12">
           Saldo em Conta:
           <currency-input
             v-if="currentCurrency"
@@ -11,7 +11,7 @@
             :value="currentCurrency.quantity"
             disabled
           />
-        </v-col>
+        </v-col> -->
         <v-col cols="12">
           <v-select
             v-model="currentCurrency"
