@@ -1,6 +1,6 @@
 <template>
   <v-container fill-height class="justify-center">
-    <v-flex xs12 sm8 md6 style="position: relative;">
+    <v-flex xs12 sm8 md6 style="position: relative; max-width:600px;">
       <v-flex class="d-flex justify-end">
         <v-btn text link :to="{ name:'registrationPage' }">
           Registro
