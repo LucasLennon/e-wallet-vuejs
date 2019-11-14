@@ -65,8 +65,9 @@ class LocalTransaction {
     const found = await user.currency.find(item => item.simbolo === transaction.simbolo);
 
     if (found) {
-      var currentValue = Number(found.quantity);
-      var newValue = Number(transaction.quantity);
+      var currentValue = Number(found.quantity).toPrecision(4);
+      var newValue = Number(transaction.quantity).toPrecision(4);
+      
       if (type === "receive") {
         found.quantity = currentValue + newValue;
       }
