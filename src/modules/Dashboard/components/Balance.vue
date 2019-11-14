@@ -10,14 +10,10 @@
             <v-col>
               <p class="pa-0 ma-0">{{item.nomeFormatado}}</p>
             </v-col>
-            <v-col>
-              <input
-                class="headling text-end font-weight-bold"
-                v-currency="{currency: item.simbolo, locale: 'pt-BR'}"
-                v-model.lazy="item.quantity"
-                style="width: 100%;"
-                disabled
-              />
+            <v-col class="text-end font-weight-bold">
+              {{
+                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: item.simbolo }).format(item.quantity)
+              }}
             </v-col>
           </v-row>
         </v-list-item>
