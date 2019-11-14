@@ -26,6 +26,32 @@ export default {
   modules: {
     loginAndRegistration: {
       state: {
+        userCurrencyList: [
+          {
+            simbolo: "BRL",
+            nomeFormatado: "Real Brasileiro",
+            tipoMoeda: "A",
+            quantity: 89060
+          },
+          {
+            simbolo: "USD",
+            nomeFormatado: "Dólar Americano",
+            tipoMoeda: "A",
+            quantity: 0
+          },
+          {
+            simbolo: "XBT",
+            nomeFormatado: "Britas",
+            tipoMoeda: "A",
+            quantity: 0
+          },
+          {
+            simbolo: "XBC",
+            nomeFormatado: "BitCoin",
+            tipoMoeda: "A",
+            quantity: 0
+          }
+        ],
         user: {
           cpf: "089.504.869-89",
           name: "Lucas Lennon Esperidiao",
