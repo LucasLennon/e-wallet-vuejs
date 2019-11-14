@@ -1,0 +1,58 @@
+name: Master Update
+
+on: 
+  push:
+    branches:
+      master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install, test
+        run: |
+          npm install
+          npm run test:unit
+        env:
+          CI: true 
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install, build
+        run: |
+          npm install
+          npm run build --if-present
+        env:
+          CI: true
+      - name: Archive dist as artifact  
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
+      - uses: amondnet/now-deployment@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+          now-args: '--prod'
