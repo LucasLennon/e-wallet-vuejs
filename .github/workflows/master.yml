@@ -1,0 +1,14 @@
+name: Master Hook
+
+on: 
+  push:
+    branches:
+      master
+jobs:
+  curl:
+    runs-on: ubuntu-latest
+    steps:
+    - name: curl
+      uses: wei/curl@master
+      with:
+        args: https://api.zeit.co/v1/integrations/deploy/QmYahx1sP8kpwLnSDCzasnyQaks46nyJe7o85ZZ7NcaKrj/nmOUIAgolu
