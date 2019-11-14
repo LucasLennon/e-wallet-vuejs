@@ -3,6 +3,9 @@ import generateUUID from "../utils/generateUUID";
 
 import LocalUser from "./LocalUser";
 
+function twelvePrecision(value) {
+  return parseFloat(value).toPrecision(12);
+}
 class LocalTransaction {
   async accessDB() {
     this.db = await openDB("e-wallet", 1);
@@ -65,8 +68,9 @@ class LocalTransaction {
     const found = await user.currency.find(item => item.simbolo === transaction.simbolo);
 
     if (found) {
-      var currentValue = Number(found.quantity);
-      var newValue = Number(transaction.quantity);
+      var currentValue = Number(twelvePrecision(found.quantity));
+      var newValue = Number(twelvePrecision(transaction.quantity));
+      
       if (type === "receive") {
         found.quantity = currentValue + newValue;
       }

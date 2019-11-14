@@ -1,13 +1,13 @@
 <template>
   <MainLayout>
     <v-container>
-      <Balance :items="currentUser.currency" />
+      <Balance :loading="!currenciesToSend" :items="currenciesToSend" />
     </v-container>
     <v-container>
       <v-card>
         <v-form
           v-model="valid"
-          v-if="currentUser && currentUser.currency"
+          v-if="currentUser && currenciesToSend"
           @submit.prevent="makeTransaction"
         >
           <ExchangeSend
@@ -21,7 +21,7 @@
           <v-divider />
           <ExchangeReceive
             v-if="sendCurrencyType"
-            :userCurrencyList="currentUser.currency"
+            :userCurrencyList="userCurrencyList"
             :listCurrencyTypes="currenciesToReceive"
             :quantity="receiveCurrencyQuantity"
             :currencyType="receiveCurrencyType"
@@ -64,6 +64,7 @@ export default {
   },
   computed: {
     ...mapState({
+      userCurrencyList: state => state.loginAndRegistration.userCurrencyList,
       currentUser: state => state.loginAndRegistration.user,
       currencyTypes: state => state.currencyTypes,
       dolarInfo: state => state.dolarInfo[state.dolarInfo.length - 1],
@@ -77,7 +78,7 @@ export default {
       ];
     },
     currenciesToSend() {
-      return this.currentUser.currency.filter(item => item.quantity > 0);
+      return this.userCurrencyList.filter(item => item.quantity > 0);
     },
     currenciesToReceive() {
       if (this.sendCurrencyType) {

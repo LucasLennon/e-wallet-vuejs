@@ -6,7 +6,14 @@ import LocalToken from "@/core/services/LocalToken";
 export default {
   namespaced: true,
   state: {
-    userCurrencyList: null,
+    userCurrencyList: [
+      {
+        simbolo: "BRL",
+        nomeFormatado: "",
+        tipoMoeda: "",
+        quantity: 1
+      }
+    ],
     user: {
       cpf: "",
       name: "",
